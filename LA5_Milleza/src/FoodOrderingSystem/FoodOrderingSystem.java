@@ -1,8 +1,7 @@
 package FoodOrderingSystem;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 public class FoodOrderingSystem extends JFrame {
     private JPanel pMain;
@@ -19,27 +18,36 @@ public class FoodOrderingSystem extends JFrame {
     private JButton orderButton;
 
     FoodOrderingSystem(){
-        JCheckBox[] food = {cbPizza, cbBurger, cbFries, cbSoftDrinks, cbTea, cbSundae};
-        int arr[] = {100,80,65,55,50,40};
-        JRadioButton[] discount = {rbNone, rb5, rb10, rb15};
-        double disc[] = {0,0.5,0.10,0.15};
-        orderButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int total = 0,ctr = 0;
-                for(JCheckBox btn : food){
-                    if(btn.isSelected()){
-                        total += arr[ctr];
-                    }
-                    ctr++;
+        HashMap<JCheckBox, Double> food = new HashMap<>();
+        food.put(cbPizza, 100.0);
+        food.put(cbBurger, 80.0);
+        food.put(cbFries, 65.0);
+        food.put(cbSoftDrinks, 55.0);
+        food.put(cbTea, 50.0);
+        food.put(cbSundae, 40.0);
+
+        HashMap<JRadioButton, Double> discounts = new HashMap<>();
+        discounts.put(rbNone, 0.0);
+        discounts.put(rb5, 0.05);
+        discounts.put(rb10, 0.10);
+        discounts.put(rb15, 0.15);
+
+        orderButton.addActionListener(_ -> {
+            double total = 0;
+            for(JCheckBox btn : food.keySet()){
+                if(btn.isSelected()){
+                    total += food.get(btn);
                 }
-                ctr = 0;
-                for(JRadioButton btn : discount) {
-                    if (btn.isSelected()) {
-                        total = total + (int) (total * (disc[ctr]));
-                    }
+            }
+            for(JRadioButton btn : discounts.keySet()) {
+                if (btn.isSelected()) {
+                    total -= total * discounts.get(btn);
                 }
-                JOptionPane.showMessageDialog(null,"Total is: " + total);
+            }
+            if(total == 0.0){
+                JOptionPane.showMessageDialog(null, "Select an item");
+            }else{
+                JOptionPane.showMessageDialog(null, "Total is: " + String.format("%.2f", total));
             }
         });
     }
